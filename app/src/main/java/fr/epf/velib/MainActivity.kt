@@ -26,13 +26,14 @@ import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener
 import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-
+import com.google.maps.android.clustering.ClusterItem
+import com.google.maps.android.clustering.ClusterManager
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener,
     OnMyLocationButtonClickListener, OnMyLocationClickListener {
     private val IDF = LatLng(48.85, 2.34)
-    private var markerPerth: Marker? = null
+    //private var markerPerth: Marker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,16 +112,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         googleMap.setOnMyLocationButtonClickListener(this)
         googleMap.setOnMyLocationClickListener(this)
 
-        // when map is ready call api to add stations on the map
-        callApi()
 
-        // Add some markers to the map, and add a data object to each marker.
-        markerPerth = googleMap.addMarker(
-            MarkerOptions()
-                .position(IDF)
-                .title("Perth")
-        )
-        markerPerth?.tag = 0
+
+
+       // Add some markers to the map, and add a data object to each marker.
+       /*markerPerth = googleMap.addMarker(
+           MarkerOptions()
+               .position(IDF)
+               .title("Perth")
+       )
+        markerPerth?.tag = 0*/
+
+        // add items
+        setUpClusterer(googleMap)
+
 
         // Set a listener for marker click.
         googleMap.setOnMarkerClickListener(this)
@@ -134,16 +139,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         // Retrieve the data from the marker.
         val clickCount = marker.tag as? Int
 
-        // Check if a click count was set, then display the click count.
-        clickCount?.let {
-            val newClickCount = it + 1
-            marker.tag = newClickCount
             Toast.makeText(
                 this,
-                "${marker.title} has been clicked $newClickCount times.",
+                "${marker.title} ${marker.snippet} ",
+
                 Toast.LENGTH_SHORT
             ).show()
-        }
+
         return false
     }
 
@@ -158,6 +160,38 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         // Return false so that we don't consume the event and the default behavior still occurs
         // (the camera animates to the user's current position).
         return false
+    }
+
+
+    // Declare a variable for the cluster manager.
+    private lateinit var clusterManager: ClusterManager<StationVelib>
+
+
+    private fun setUpClusterer(map : GoogleMap) {
+
+        // Initialize the manager with the context and the map.
+        // (Activity extends context, so we can pass 'this' in the constructor.)
+        clusterManager = ClusterManager(this, map)
+
+        // Point the map's listeners at the listeners implemented by the cluster
+        // manager.
+        map.setOnCameraIdleListener(clusterManager)
+        map.setOnMarkerClickListener(clusterManager)
+
+        // Add cluster items (markers) to the cluster manager.
+        addItems()
+    }
+
+    private fun addItems() {
+        var stations: List<StationVelib> = callApi()
+
+
+        for (station in stations) {
+            Log.d("result", "list station: ${station.name}")
+            val offsetItem =
+                StationVelib(station.station_id, station.bikes_available, station.capacity, station.ebikes_available, station.last_reported,station.lat,station.lon,station.name,station.num_docks_available,station.stationCode)
+            clusterManager.addItem(offsetItem)
+        }
     }
 
 
