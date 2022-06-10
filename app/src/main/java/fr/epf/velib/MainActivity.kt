@@ -7,6 +7,7 @@ import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -103,7 +104,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     /** Called when the map is ready.  */
-    @SuppressLint("MissingPermission", "WrongViewCast")
+    @SuppressLint("MissingPermission", "WrongViewCast", "Range")
     override fun onMapReady(googleMap: GoogleMap) {
 
         // zoom + and - on map
@@ -128,10 +129,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
             bikesData.text = item.bikes_available.toString()
 
             val eBikesData = findViewById<TextView>(R.id.ebikes_data)
-            eBikesData.text = item.bikes_available.toString()
+            eBikesData.text = item.ebikes_available.toString()
 
             val docksData = findViewById<TextView>(R.id.docks_data)
-            docksData.text = item.bikes_available.toString()
+            docksData.text = item.num_docks_available.toString()
 
             val popup = findViewById<CardView>(R.id.card_view)
             popup.isVisible = true
@@ -141,8 +142,43 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
                 popup.isVisible =false
             }
 
+            // when user clicks on fav button
+            val favButton = findViewById<Button>(R.id.fav_changing_button)
+            favButton.setOnClickListener(){
+                val db = DBHelper(this, null)
+                val id_station = item.station_id
+                val bikes_available = item.bikes_available
+                val ebikes_available = item.ebikes_available
+                val num_docks_available = item.num_docks_available
+
+                db.addStation(id_station, bikes_available, ebikes_available,num_docks_available)
+
+
+                val cursor = db.getName()
+
+                // moving the cursor to first position and
+                // appending value in the text view
+                cursor!!.moveToFirst()
+                cursor.getString(cursor.getColumnIndex(DBHelper.BIKES_COl)) + "\n"
+
+
+                // moving our cursor to next
+                // position and appending values
+                while(cursor.moveToNext()){
+                    Log.i("2", cursor.getString(cursor.getColumnIndex(DBHelper.BIKES_COl)) + "\n" )
+
+                }
+
+                // at last we close our cursor
+                cursor.close()
+            }
+
             false
         }
+
+
+
+
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(IDF, 9.0f))
     }
 
@@ -187,6 +223,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
             clusterManager.addItem(offsetItem)
         }
     }
+
+
+
 }
 
 
