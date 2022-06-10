@@ -8,10 +8,85 @@
 
     <fragment
         android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="com.google.android.gms.maps.SupportMapFragment" />
+        android:layout_height="match_parent" />
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_width="408dp"
+        android:layout_height="330dp"
+        android:layout_gravity="center"
+
+        android:visibility="invisible"
+        app:cardCornerRadius="4dp"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/map"
+        tools:ignore="MissingConstraints">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/close_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_baseline_close_24" />
+
+            <TextView
+                android:id="@+id/info_text"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nom de la station Velib" />
+
+            <TextView
+                android:id="@+id/bikes_availables"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Vélos disponibles" />
+
+            <TextView
+                android:id="@+id/bikes_data"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/ebikes_availables"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Vélos électriques disponibles " />
+
+            <TextView
+                android:id="@+id/ebikes_data"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/docks_availables"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Places restantes" />
+
+            <TextView
+                android:id="@+id/docks_data"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

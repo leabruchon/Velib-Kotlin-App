@@ -24,11 +24,11 @@ data class StationVelib(
     }
 
     override fun getTitle(): String? {
-        return name
+        return ""
     }
 
     override fun getSnippet(): String? {
-        return "bikes availables : $bikes_available ebikes availables : $ebikes_available"
+        return ""
     }
 
 }
