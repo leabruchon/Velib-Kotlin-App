@@ -1,10 +1,12 @@
 package fr.epf.velib
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import fr.epf.velib.model.StationVelib
 
 class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
@@ -18,7 +20,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 IDSTATION_COL + " LONG," +
                 BIKES_COl + " INTEGER," +
                 EBIKES_COL + " INTEGER," +
-                DOCKS_COL + " INTEGER" +")")
+                DOCKS_COL + " INTEGER" + ")")
 
         // we are calling sqlite
         // method for executing our query
@@ -32,7 +34,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     }
 
     // This method is for adding data in our database
-    fun addStation(id : Long, bikes : Int, ebikes : Int, docks : Int ){
+    fun addStation(id: Long, bikes: Int, ebikes: Int, docks: Int) {
 
         // below we are creating
         // a content values variable
@@ -61,18 +63,44 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
     // below method is to get
     // all data from our database
-    fun getName(): Cursor? {
+    @SuppressLint("Range")
+    fun getInfo(): ArrayList<StationVelib> {
 
-        // here we are creating a readable
-        // variable of our database
-        // as we want to read value from it
-        val db = this.readableDatabase
+        /*val db: SQLiteDatabase = this.readableDatabase
+        val arrayList = ArrayList<String>()
+        val res: Cursor = db.rawQuery("select * from $TABLE_NAME", null)
+        res.moveToFirst()
+        while (!res.isAfterLast) {
+            arrayList.add(res.getString(res.getColumnIndex("station_id")));
+            arrayList.add(res.getString(res.getColumnIndex("bikes_available")));
 
-        // below code returns a cursor to
-        // read data from the database
-        return db.rawQuery("SELECT * FROM " + TABLE_NAME, null)
 
+            res.moveToNext();
+        }*/
+
+        var list = ArrayList<StationVelib>()
+        val readableDataBase = this.readableDatabase
+        val cursor = readableDataBase.rawQuery("select * from $TABLE_NAME", null)
+        cursor.moveToFirst()
+
+        while (!cursor.isAfterLast) {
+
+            var station = StationVelib(0,0,0,0,0,0.0,0.0,"",0,"")
+            station.station_id = cursor.getLong(cursor.getColumnIndex(IDSTATION_COL))
+            station.bikes_available = cursor.getInt(cursor.getColumnIndex(BIKES_COl))
+            station.ebikes_available = cursor.getInt(cursor.getColumnIndex(EBIKES_COL))
+            station.num_docks_available = cursor.getInt(cursor.getColumnIndex(DOCKS_COL))
+
+            list.add(station)
+
+            cursor.moveToNext()
+        }
+
+        return list
     }
+
+
+
 
     companion object{
         // here we have defined variables for our database

@@ -5,15 +5,15 @@ import com.google.maps.android.clustering.ClusterItem
 
 
 data class StationVelib(
-    val station_id :Long,
-    val bikes_available:Int,
+    var station_id :Long,
+    var bikes_available:Int,
     val capacity:Int,
-    val ebikes_available:Int,
+    var ebikes_available:Int,
     val last_reported:Int,
     val lat:Double,
     val lon:Double,
     val name:String,
-    val num_docks_available:Int,
+    var num_docks_available:Int,
     val stationCode:String,
 ) : ClusterItem{
 

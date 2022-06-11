@@ -2,6 +2,7 @@ package fr.epf.velib
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -54,6 +55,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
                 ActivityCompat.requestPermissions(this@MainActivity,
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
             }
+        }
+
+        val button = findViewById<Button>(R.id.favorites_button)
+        button.setOnClickListener{
+            val intent = Intent(this, FavoriteActivity::class.java)
+            startActivity(intent)
         }
 
         val mapFragment =
@@ -147,30 +154,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
             favButton.setOnClickListener(){
                 val db = DBHelper(this, null)
                 val id_station = item.station_id
+                val name = item.name
                 val bikes_available = item.bikes_available
                 val ebikes_available = item.ebikes_available
                 val num_docks_available = item.num_docks_available
 
                 db.addStation(id_station, bikes_available, ebikes_available,num_docks_available)
 
-
-                val cursor = db.getName()
-
-                // moving the cursor to first position and
-                // appending value in the text view
-                cursor!!.moveToFirst()
-                cursor.getString(cursor.getColumnIndex(DBHelper.BIKES_COl)) + "\n"
-
-
-                // moving our cursor to next
-                // position and appending values
-                while(cursor.moveToNext()){
-                    Log.i("2", cursor.getString(cursor.getColumnIndex(DBHelper.BIKES_COl)) + "\n" )
-
-                }
-
-                // at last we close our cursor
-                cursor.close()
             }
 
             false
